@@ -1,6 +1,8 @@
 package com.fiap.greentracefood.usecases.pagamento;
 
 
+import java.math.BigDecimal;
+
 import com.fiap.greentracefood.domain.entity.pagamento.enums.StatusPagamento;
 import com.fiap.greentracefood.domain.entity.pagamento.gateway.PagamentoGateway;
 import com.fiap.greentracefood.domain.entity.pagamento.model.Pagamento;
@@ -26,7 +28,7 @@ public class PagamentoUseCase {
 
     public String iniciarPagamento(String codigoPedido) {
         Pedido pedido = buscarPedidoPorCodigo(codigoPedido);
-        String qrCode = gerarQRCode(pedido);
+    	String qrCode = gerarQRCode(pedido);
         atualizarStatusPagamento(pedido);
         return qrCode;
     }

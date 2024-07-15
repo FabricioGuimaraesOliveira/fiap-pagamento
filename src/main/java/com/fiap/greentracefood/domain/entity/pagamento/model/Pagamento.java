@@ -4,7 +4,7 @@ import com.fiap.greentracefood.domain.entity.pagamento.enums.StatusPagamento;
 
 
 public class Pagamento {
-    private long id;
+    private String id;
 
     public String getQrCode() {
         return qrCode;
@@ -17,11 +17,11 @@ public class Pagamento {
     private String qrCode;
     private StatusPagamento status;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -44,7 +44,7 @@ public class Pagamento {
     }
 
 
-    private Pagamento() {
+    public Pagamento() {
     }
 
     public static PagamentoBuilder builder() {
@@ -57,7 +57,7 @@ public class Pagamento {
         private PagamentoBuilder() {
         }
 
-        public PagamentoBuilder id(long id) {
+        public PagamentoBuilder id(String id) {
             instancia.id = id;
             return this;
         }
