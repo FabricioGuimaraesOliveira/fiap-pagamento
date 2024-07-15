@@ -1,23 +1,16 @@
-version: '3'
+version: '3.8'
+
 services:
-  db:
-    image: postgres:latest
-    container_name: db
-    restart: always
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
     ports:
-      - "5432:5432"
+      - "27017:27017"
     environment:
-      - POSTGRES_USER=fiap
-      - POSTGRES_PASSWORD=fiap
-      - POSTGRES_DB=bd_lanchonete
+      MONGO_INITDB_ROOT_USERNAME: fiap
+      MONGO_INITDB_ROOT_PASSWORD: fiap
     volumes:
-      - ./data:/data
-  spring-app:
-    build:
-      context: ./
-      dockerfile: Dockerfile
-    container_name: api 
-    ports:
-      - "8080:8080"
-    depends_on:
-      - db
+      - mongodb_data:/data/db
+
+volumes:
+  mongodb_data:
