@@ -1,9 +1,8 @@
 package com.fiap.greentracefood.domain.entity.pagamento.gateway;
 
-import com.fiap.greentracefood.domain.entity.pagamento.enums.StatusPagamento;
-import com.fiap.greentracefood.domain.entity.pagamento.model.Pagamento;
-
 import java.util.Optional;
+
+import com.fiap.greentracefood.domain.entity.pagamento.model.Pagamento;
 
 public interface PagamentoGateway {
    Optional<Pagamento> consultarPorPedido(String codigoPedido);

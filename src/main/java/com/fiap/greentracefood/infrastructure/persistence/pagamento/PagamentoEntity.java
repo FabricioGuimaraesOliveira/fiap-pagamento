@@ -22,8 +22,6 @@ public class PagamentoEntity {
     private long id;
     @Enumerated(EnumType.STRING)
     private StatusPagamento status;
-    @OneToOne(mappedBy = "pagamento", fetch = FetchType.LAZY)
-    private PedidoEntity pedido;
     @Column(name = "qr_code", length = 100)
     private String qrCodeData;
 
