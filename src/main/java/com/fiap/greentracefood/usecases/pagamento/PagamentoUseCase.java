@@ -6,7 +6,6 @@ import com.fiap.greentracefood.domain.entity.pagamento.gateway.PagamentoGateway;
 import com.fiap.greentracefood.domain.entity.pagamento.model.Pagamento;
 import com.fiap.greentracefood.domain.entity.pedido.gateway.PedidoGateway;
 import com.fiap.greentracefood.domain.entity.pedido.model.Pedido;
-import com.fiap.greentracefood.infrastructure.exceptions.ResourceNotFoundException;
 import com.fiap.greentracefood.infrastructure.mercadopago.gateway.MercadoPagoGateway;
 
 public class PagamentoUseCase {
@@ -33,8 +32,7 @@ public class PagamentoUseCase {
     }
 
     private Pedido buscarPedidoPorCodigo(String codigoPedido) {
-        return pedidoGateway.detalharPorCodigo(codigoPedido)
-                .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado"));
+        return pedidoGateway.detalharPorCodigo(codigoPedido);
     }
 
     private String gerarQRCode(Pedido pedido) {

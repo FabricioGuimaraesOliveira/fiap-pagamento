@@ -1,7 +1,6 @@
 package com.fiap.greentracefood.domain.entity.pagamento.model;
 
 import com.fiap.greentracefood.domain.entity.pagamento.enums.StatusPagamento;
-import com.fiap.greentracefood.domain.entity.pedido.model.Pedido;
 
 
 public class Pagamento {
@@ -26,15 +25,15 @@ public class Pagamento {
         this.id = id;
     }
 
-    public Pedido getPedido() {
+    public Long getPedido() {
         return pedido;
     }
 
-    public void setPedido(Pedido pedido) {
+    public void setPedido(Long pedido) {
         this.pedido = pedido;
     }
 
-    private Pedido pedido;
+    private Long pedido;
 
     public StatusPagamento getStatus() {
         return status;

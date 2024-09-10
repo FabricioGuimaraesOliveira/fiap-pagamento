@@ -35,3 +35,4 @@ build/
 
 # OSX
 .DS_Store
+/.apt_generated_tests/
