@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OrderSender {
 
-    @Value("${order.queue}")
+    @Value("${aws.sqs.queue.order}")
     private String PROCESSED_QUEUE_NAME;
 
     private static final Logger logger = LoggerFactory.getLogger(OrderSender.class);
@@ -26,6 +26,8 @@ public class OrderSender {
             String jsonMessage = objectMapper.writeValueAsString(pagamentoOrder);
             sqsTemplate.send(PROCESSED_QUEUE_NAME, jsonMessage);
             logger.info("Message sent to {} successfully", PROCESSED_QUEUE_NAME);
+            logger.info("Order Send Payment Status: {}", jsonMessage);
+
         } catch (Exception e) {
             logger.error("Error sending message to {}", PROCESSED_QUEUE_NAME, e);
         }

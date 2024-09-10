@@ -18,7 +18,7 @@ public class PaymentListener {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final SqsTemplate sqsTemplate;
 
-    @SqsListener("payment-queue")
+    @SqsListener("${aws.sqs.queue.payment}")
     public void receiveMessage(String message) {
         try {
             PaymentListenerDto paymentDto = objectMapper.readValue(message, PaymentListenerDto.class);
