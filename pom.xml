@@ -10,14 +10,14 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.fiap.greentracefood</groupId>
-	<artifactId>fiap-producao</artifactId>
+	<artifactId>fiap-pagamento</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fiap-pagamento</name>
 	<description>Microsservico de Pagamento</description>
 	<properties>
 		<java.version>21</java.version>
 		<spring.cloud.version>2023.0.0</spring.cloud.version>
-		<spring.cloud.aws.version>3.0.1</spring.cloud.aws.version>
+		<spring.cloud.aws.version>3.1.0</spring.cloud.aws.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -81,6 +81,12 @@
 		<dependency>
 			<groupId>io.awspring.cloud</groupId>
 			<artifactId>spring-cloud-aws-starter-sqs</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>io.awspring.cloud</groupId>
+			<!-- automatically configure authentication and region selection -->
+			<artifactId>spring-cloud-aws-starter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.awspring.cloud</groupId>
