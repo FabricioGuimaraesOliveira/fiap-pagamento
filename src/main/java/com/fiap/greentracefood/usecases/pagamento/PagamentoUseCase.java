@@ -6,44 +6,40 @@ import java.math.BigDecimal;
 import com.fiap.greentracefood.domain.entity.pagamento.enums.StatusPagamento;
 import com.fiap.greentracefood.domain.entity.pagamento.gateway.PagamentoGateway;
 import com.fiap.greentracefood.domain.entity.pagamento.model.Pagamento;
-import com.fiap.greentracefood.domain.entity.pedido.gateway.PedidoGateway;
-import com.fiap.greentracefood.domain.entity.pedido.model.Pedido;
 import com.fiap.greentracefood.infrastructure.mercadopago.gateway.MercadoPagoGateway;
+import com.fiap.greentracefood.infrastructure.messaging.OrderSender;
 
 public class PagamentoUseCase {
 
     private final PagamentoGateway pagamentoGateway;
-    private final PedidoGateway pedidoGateway;
     private final MercadoPagoGateway mercadoPagoGateway;
+    private final OrderSender orderSender;
 
-    public PagamentoUseCase(PagamentoGateway pagamentoGateway, PedidoGateway pedidoGateway, MercadoPagoGateway mercadoPagoGateway) {
+    public PagamentoUseCase(PagamentoGateway pagamentoGateway, MercadoPagoGateway mercadoPagoGateway,OrderSender orderSender) {
         this.pagamentoGateway = pagamentoGateway;
-        this.pedidoGateway = pedidoGateway;
         this.mercadoPagoGateway = mercadoPagoGateway;
+        this.orderSender = orderSender;
     }
 
     public Pagamento consultarPorPedido(String codigoPedido) {
         return pagamentoGateway.consultarPorPedido(codigoPedido).orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
     }
 
-    public String iniciarPagamento(String codigoPedido) {
-        Pedido pedido = buscarPedidoPorCodigo(codigoPedido);
-    	String qrCode = gerarQRCode(pedido);
-        atualizarStatusPagamento(pedido);
+    public String iniciarPagamento(String codigoPedido, BigDecimal value) {
+    	String qrCode = gerarQRCode(codigoPedido,value);
+        atualizarStatusPagamento(codigoPedido, qrCode);
         return qrCode;
     }
 
-    private Pedido buscarPedidoPorCodigo(String codigoPedido) {
-        return pedidoGateway.detalharPorCodigo(codigoPedido);
+    private String gerarQRCode(String codigo, BigDecimal valor) {
+        return mercadoPagoGateway.generateQRCodeMock(codigo, valor);
     }
 
-    private String gerarQRCode(Pedido pedido) {
-        return mercadoPagoGateway.generateQRCodeMock(pedido.getId(), pedido.getValorTotal());
-    }
-
-    private void atualizarStatusPagamento(Pedido pedido) {
-        Pagamento pagamento = pedido.getPagamento();
+    private void atualizarStatusPagamento(String codigoPedido,String qrCode) {
+        Pagamento pagamento = new Pagamento();
+        pagamento.setId(codigoPedido);
         pagamento.setStatus(StatusPagamento.PAGAMENTO_INICIADO);
+        pagamento.setQrCode(qrCode);
         pagamentoGateway.salvar(pagamento);
     }
     public void registrarPagamento(String codigoPedido, StatusPagamento statusPagamento) {
@@ -53,5 +49,7 @@ public class PagamentoUseCase {
         Pagamento pagamento = pagamentoGateway.consultarPorPedido(codigoPedido).orElseThrow(() -> new RuntimeException("Pagamento não encontrado"));
         pagamento.setStatus(statusPagamento);
         pagamentoGateway.salvar(pagamento);
+
+        orderSender.sendProcessedPaymentMessage(pagamento);
     }
 }

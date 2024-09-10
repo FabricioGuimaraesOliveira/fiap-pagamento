@@ -6,6 +6,12 @@ import com.fiap.greentracefood.domain.entity.pagamento.enums.StatusPagamento;
 public class Pagamento {
     private String id;
 
+    public Pagamento(String id, StatusPagamento status, String qrCodeData) {
+        this.id = id;
+        this.status = status;
+        this.qrCode = qrCodeData;
+    }
+
     public String getQrCode() {
         return qrCode;
     }
