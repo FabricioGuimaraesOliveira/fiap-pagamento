@@ -1,36 +1,56 @@
 package com.fiap.greentracefood.infrastructure.pagamento.gateway;
 import java.util.Optional;
 
+import com.fiap.greentracefood.infrastructure.persistence.pagamento.PagamentoEntity;
 import org.modelmapper.ModelMapper;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 
 import com.fiap.greentracefood.domain.entity.pagamento.gateway.PagamentoGateway;
 import com.fiap.greentracefood.domain.entity.pagamento.model.Pagamento;
-import com.fiap.greentracefood.infrastructure.persistence.pagamento.PagamentoEntity;
-import com.fiap.greentracefood.infrastructure.persistence.pagamento.SpringPagamentoRepository;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbEnhancedClient;
+import software.amazon.awssdk.enhanced.dynamodb.DynamoDbTable;
+import software.amazon.awssdk.enhanced.dynamodb.Key;
+import software.amazon.awssdk.enhanced.dynamodb.TableSchema;
 
+import java.util.Optional;
+import java.util.UUID;
 
 public class PagamentoDataBaseRepository implements PagamentoGateway {
-    private  final SpringPagamentoRepository springPagamentoRepository;
-    private final ModelMapper modelMapper;
+    private final DynamoDbEnhancedClient enhancedClient;
+    private final DynamoDbTable<PagamentoEntity> table;
 
-    public PagamentoDataBaseRepository(SpringPagamentoRepository springPagamentoRepository, ModelMapper modelMapper) {
-        this.springPagamentoRepository = springPagamentoRepository;
-        this.modelMapper = modelMapper;
+    public PagamentoDataBaseRepository(DynamoDbEnhancedClient enhancedClient, String tableName) {
+        this.enhancedClient = enhancedClient;
+        this.table = enhancedClient.table(tableName, TableSchema.fromBean(PagamentoEntity.class));
     }
-
-    @Override
-    @Transactional(readOnly = true)
-    public Optional<Pagamento> consultarPorPedido(String codigoPedido) {
-        //return springPagamentoRepository.findByPedidoCodigo(codigoPedido).map(pagamentoEntity -> modelMapper.map(pagamentoEntity, Pagamento.class));
-    	
-    	return null;
-    }
-
 
     @Override
     public void salvar(Pagamento pagamento) {
-    	var pagamentoEntity = modelMapper.map(pagamento, PagamentoEntity.class);
-        springPagamentoRepository.save(pagamentoEntity);
+        PagamentoEntity pagamentoEntity = new PagamentoEntity(
+                pagamento.getId(),  // Gera um UUID para o ID do pagamento
+                pagamento.getStatus(),
+                pagamento.getQrCode()
+        );
+        table.putItem(pagamentoEntity);
+    }
+
+    @Override
+    public Optional<Pagamento> consultarPorPedido(String codigoPedido) {
+        Key key = Key.builder()
+                .partitionValue(codigoPedido)
+                .build();
+
+        PagamentoEntity pagamentoEntity = table.getItem(r -> r.key(key));
+
+        if (pagamentoEntity != null) {
+            Pagamento pagamento = new Pagamento(
+                    pagamentoEntity.getId(),
+                    pagamentoEntity.getStatus(),
+                    pagamentoEntity.getQrCodeData()
+            );
+            return Optional.of(pagamento);
+        }
+
+        return Optional.empty();
     }
 }

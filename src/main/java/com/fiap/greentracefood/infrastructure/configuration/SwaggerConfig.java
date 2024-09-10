@@ -25,7 +25,7 @@ public class SwaggerConfig {
                 .title("Sistema Green Trace Food Lanches")
                 .version("1.0")
                 .contact(contact)
-                .description("Esta API disponibiliza endpoints para gerenciamento de pedidos").termsOfService("https://www.developer.com/terms")
+                .description("Esta API disponibiliza endpoints para gerenciamento de pagamentos de pedidos").termsOfService("https://www.developer.com/terms")
                 .license(mitLicense);
         return new OpenAPI()
                 .info(info);

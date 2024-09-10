@@ -7,8 +7,7 @@ import java.util.UUID;
 
 @Service
 public class MercadoPagoGateway  {
-    public String generateQRCodeMock(Long id, BigDecimal transactionAmount) {
-        String  identification= String.format("%020d", id);
+    public String generateQRCodeMock(String identification, BigDecimal transactionAmount) {
         String requestIdentification = UUID.randomUUID().toString();
         String amount = transactionAmount.toString();
 
